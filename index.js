@@ -33,7 +33,7 @@ async function run() {
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id);
-            const query = { _id: ObJectId(id) };
+            const query = { _id: ObjectId(id) };
             const service = await servicesCollection.findOne(query);
             res.json(service)
         });
@@ -47,10 +47,28 @@ async function run() {
             res.json(result);
         });
 
+        //UPDATE API
+        app.put('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateService = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updateService.name,
+                    price: updateService.price
+                },
+            };
+            const result = await servicesCollection.updateOne(filter, updateDoc, options);
+            console.log('updated id', req);
+            res.json(result);
+        });
+
+
         // DELETE API
         app.delete('/services/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObJectId(id) };
+            const query = { _id: ObjectId(id) };
             const result = await servicesCollection.deleteOne(query);
             console.log(result)
             res.json(result);
